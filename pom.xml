@@ -9,13 +9,22 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.cheivin</groupId>
-    <artifactId>auth</artifactId>
+    <artifactId>auth-component</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>auth</name>
-    <description>auth</description>
+    <name>auth-component</name>
+    <description>auth-component</description>
     <properties>
         <java.version>11</java.version>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Cheivin/auth-component</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

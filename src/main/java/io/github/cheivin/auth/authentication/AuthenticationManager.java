@@ -4,9 +4,13 @@ import io.github.cheivin.auth.filter.AuthenticationFilter;
 import io.github.cheivin.auth.filter.BearerAuthenticationFilter;
 import io.github.cheivin.auth.token.TokenStore;
 import io.github.cheivin.auth.user.UserDetailsService;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,24 +20,26 @@ import java.util.List;
 /**
  * 身份认证管理器
  */
-public class AuthenticationManager extends FilterRegistrationBean<AuthenticationFilter> {
+public class AuthenticationManager extends OncePerRequestFilter {
     private static final List<String> DEFAULT_PATTERNS = Collections.singletonList("/**");
     private static final List<String> DEFAULT_EXCLUDE_PATTERNS = Collections.emptyList();
 
+    private final AuthenticationFilter filter;
+
     private AuthenticationManager(UserDetailsService userDetailsService, TokenStore tokenStore, AuthenticationErrorHandler errorHandler, List<String> patterns, List<String> excludePathPatterns) {
         super();
-        AuthenticationFilter filter = new BearerAuthenticationFilter(userDetailsService, tokenStore, errorHandler);
+        filter = new BearerAuthenticationFilter(userDetailsService, tokenStore, errorHandler);
         filter.addPathPatterns(patterns == null ? DEFAULT_PATTERNS : patterns);
         filter.addExcludePathPatterns(excludePathPatterns == null ? DEFAULT_EXCLUDE_PATTERNS : excludePathPatterns);
-
-        this.setFilter(filter);
-        this.setUrlPatterns(Collections.singleton("/*"));
-        this.setName("AuthenticationFilter");
-        this.setOrder(1);  //值越小，Filter越靠前。
     }
 
     public static Builder builder(UserDetailsService userDetailsService, TokenStore tokenStore) {
         return new Builder(userDetailsService, tokenStore);
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        filter.doFilter(request, response, filterChain);
     }
 
     public static class Builder {

@@ -90,7 +90,7 @@ public abstract class AuthenticationFilter implements Filter {
         }
         // 获取token
         Optional<String> tokenOptional = getToken(request);
-        if (!tokenOptional.isPresent()) {
+        if (tokenOptional.isEmpty()) {
             errorHandler.onTokenNotPresent(request, response, new TokenNotPresentException());
             return;
         }

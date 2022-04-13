@@ -29,7 +29,7 @@ public class AuthenticationManager extends OncePerRequestFilter {
     private AuthenticationManager(UserDetailsService userDetailsService, TokenStore tokenStore, AuthenticationErrorHandler errorHandler, List<String> patterns, List<String> excludePathPatterns) {
         super();
         filter = new BearerAuthenticationFilter(userDetailsService, tokenStore, errorHandler);
-        filter.addPathPatterns(patterns == null ? DEFAULT_PATTERNS : patterns);
+        filter.addPathPatterns(patterns == null || patterns.isEmpty() ? DEFAULT_PATTERNS : patterns);
         filter.addExcludePathPatterns(excludePathPatterns == null ? DEFAULT_EXCLUDE_PATTERNS : excludePathPatterns);
     }
 
